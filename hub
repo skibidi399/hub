@@ -28,45 +28,42 @@ local Humanoid, Animator
 local StarterGui = game:GetService("StarterGui")
 
 -- reach hitbox var
-local HitboxEnabled = false
-local HitboxMaxRange = 120
-local RNG = Random.new()
+local ForsakenReachEnabled = false
+local ForsakenNearestDist = 120
+local ForsakenRNG = Random.new()
 
-local HitboxAttackAnimations = {
-    "rbxassetid://131430497821198", "rbxassetid://83829782357897",
-    "rbxassetid://126830014841198", "rbxassetid://126355327951215",
-    "rbxassetid://121086746534252", "rbxassetid://105458270463374",
-    "rbxassetid://127172483138092", "rbxassetid://18885919947",
-    "rbxassetid://18885909645", "rbxassetid://87259391926321",
-    "rbxassetid://106014898528300", "rbxassetid://86545133269813",
-    "rbxassetid://89448354637442", "rbxassetid://90499469533503",
-    "rbxassetid://116618003477002", "rbxassetid://106086955212611",
-    "rbxassetid://107640065977686", "rbxassetid://77124578197357",
-    "rbxassetid://101771617803133", "rbxassetid://134958187822107",
-    "rbxassetid://111313169447787", "rbxassetid://71685573690338",
-    "rbxassetid://129843313690921", "rbxassetid://97623143664485",
-    "rbxassetid://136007065400978", "rbxassetid://86096387000557",
-    "rbxassetid://108807732150251", "rbxassetid://138040001965654",
-    "rbxassetid://73502073176819", "rbxassetid://86709774283672",
-    "rbxassetid://140703210927645", "rbxassetid://96173857867228",
-    "rbxassetid://121255898612475", "rbxassetid://98031287364865",
-    "rbxassetid://119462383658044", "rbxassetid://77448521277146",
-    "rbxassetid://103741352379819", "rbxassetid://131696603025265",
-    "rbxassetid://122503338277352", "rbxassetid://97648548303678",
-    "rbxassetid://94162446513587", "rbxassetid://84426150435898",
-    "rbxassetid://93069721274110", "rbxassetid://114620047310688",
-    "rbxassetid://97433060861952", "rbxassetid://82183356141401",
-    "rbxassetid://100592913030351", "rbxassetid://121293883585738",
-    "rbxassetid://70447634862911", "rbxassetid://92173139187970",
-    "rbxassetid://106847695270773", "rbxassetid://125403313786645",
-    "rbxassetid://81639435858902", "rbxassetid://137314737492715",
-    "rbxassetid://120112897026015", "rbxassetid://82113744478546",
-    "rbxassetid://118298475669935", "rbxassetid://126681776859538",
-    "rbxassetid://129976080405072", "rbxassetid://109667959938617",
-    "rbxassetid://74707328554358", "rbxassetid://133336594357903",
-    "rbxassetid://86204001129974", "rbxassetid://124243639579224",
-    "rbxassetid://70371667919898", "rbxassetid://131543461321709",
-    "rbxassetid://136323728355613", "rbxassetid://109230267448394"
+local ForsakenAttackList = {
+    'rbxassetid://131430497821198','rbxassetid://83829782357897','rbxassetid://126830014841198',
+    'rbxassetid://126355327951215','rbxassetid://121086746534252','rbxassetid://105458270463374',
+    'rbxassetid://127172483138092','rbxassetid://18885919947','rbxassetid://18885909645',
+    'rbxassetid://87259391926321','rbxassetid://106014898528300','rbxassetid://87259391926321',
+    'rbxassetid://86545133269813','rbxassetid://89448354637442','rbxassetid://90499469533503',
+    'rbxassetid://116618003477002','rbxassetid://106086955212611','rbxassetid://107640065977686',
+    'rbxassetid://77124578197357','rbxassetid://101771617803133','rbxassetid://134958187822107',
+    'rbxassetid://111313169447787','rbxassetid://71685573690338','rbxassetid://71685573690338',
+    'rbxassetid://129843313690921','rbxassetid://97623143664485','rbxassetid://129843313690921',
+    'rbxassetid://136007065400978','rbxassetid://136007065400978','rbxassetid://86096387000557',
+    'rbxassetid://86096387000557','rbxassetid://108807732150251','rbxassetid://138040001965654',
+    'rbxassetid://73502073176819','rbxassetid://129843313690921','rbxassetid://97623143664485',
+    'rbxassetid://129843313690921','rbxassetid://97623143664485','rbxassetid://97623143664485',
+    'rbxassetid://86709774283672','rbxassetid://106014898528300','rbxassetid://87259391926321',
+    'rbxassetid://140703210927645','rbxassetid://96173857867228','rbxassetid://121255898612475',
+    'rbxassetid://98031287364865','rbxassetid://119462383658044','rbxassetid://77448521277146',
+    'rbxassetid://77448521277146','rbxassetid://103741352379819','rbxassetid://119462383658044',
+    'rbxassetid://131696603025265','rbxassetid://122503338277352','rbxassetid://97648548303678',
+    'rbxassetid://94162446513587','rbxassetid://84426150435898','rbxassetid://93069721274110',
+    'rbxassetid://114620047310688','rbxassetid://97433060861952','rbxassetid://82183356141401',
+    'rbxassetid://100592913030351','rbxassetid://121293883585738','rbxassetid://100592913030351',
+    'rbxassetid://121293883585738','rbxassetid://100592913030351','rbxassetid://121293883585738',
+    'rbxassetid://70447634862911','rbxassetid://92173139187970','rbxassetid://106847695270773',
+    'rbxassetid://125403313786645','rbxassetid://81639435858902','rbxassetid://137314737492715',
+    'rbxassetid://120112897026015','rbxassetid://82113744478546','rbxassetid://118298475669935',
+    'rbxassetid://82113744478546','rbxassetid://118298475669935','rbxassetid://126681776859538',
+    'rbxassetid://129976080405072','rbxassetid://109667959938617','rbxassetid://74707328554358',
+    'rbxassetid://133336594357903','rbxassetid://86204001129974','rbxassetid://82113744478546',
+    'rbxassetid://118298475669935','rbxassetid://124243639579224','rbxassetid://70371667919898',
+    'rbxassetid://131543461321709','rbxassetid://136323728355613','rbxassetid://140703210927645',
+    'rbxassetid://109230267448394','rbxassetid://139835501033932'
 }
 
 -- player var
@@ -257,73 +254,91 @@ local CreditsTab = Window:CreateTab("Credits", 4483362458)
 
 -- Things
 -- Reach hitbox (thing)
-
-local HitboxFolder = workspace:WaitForChild("Hitboxes")
-
--- Helper to check if local player is in an attack animation
-local function IsAttacking()
-	for _, track in ipairs(Humanoid:GetPlayingAnimationTracks()) do
-		if table.find(AttackAnimations, track.Animation.AnimationId) then
-			return true
-		end
-	end
-	return false
+local ForsakenAttackIds = {}
+for _, v in ipairs(ForsakenAttackList) do
+    local n = tostring(v):match("%d+")
+    if n then ForsakenAttackIds[n] = true end
 end
 
--- Whenever a new hitbox part is added
-HitboxFolder.ChildAdded:Connect(function(child)
-	if not Enabled then return end
-	if not HumanoidRootPart then return end
+-- heartbeat loop that follows your original logic but re-uses hub's lHumanoid/lHRP and lp
+local conn
+conn = RunService.Heartbeat:Connect(function()
+    if not ForsakenReachEnabled then return end
+    if not lHumanoid or not lHRP then return end
 
-	-- only trigger if this hitbox belongs to us
-	if child.Name ~= LocalPlayer.Name .. "Hitbox" then return end
+    -- check if player is playing one of the attack anims (within early part)
+    local Playing = false
+    for _, track in ipairs(lHumanoid:GetPlayingAnimationTracks()) do
+        local animObj = track.Animation
+        if animObj and animObj.AnimationId then
+            local animNum = tostring(animObj.AnimationId):match("%d+")
+            if animNum and ForsakenAttackIds[animNum] then
+                local timePos = (track.TimePosition or 0)
+                local length = (track.Length or 1)
+                if (timePos / length) < 0.75 then
+                    Playing = true
+                    break
+                end
+            end
+        end
+    end
+    if not Playing then return end
 
-	-- only trigger if an attack animation is actually playing
-	if not IsAttacking() then return end
+    -- find nearest valid target (players + NPCs)
+    local Target = nil
+    local CurrentNearestDist = ForsakenNearestDist
 
-	-- Run reach assist once for this hitbox
-	task.defer(function()
-		-- wait a frame to ensure part is fully created
-		RunService.Heartbeat:Wait()
-		if not child or not child.Parent then return end
+    local function checkModels(t)
+        for _, m in ipairs(t) do
+            if not m then continue end
+            if m == lp.Character then continue end
+            if not m:IsA("Model") then continue end
+            local hrp = m:FindFirstChild("HumanoidRootPart")
+            if not hrp then continue end
+            local dist = (hrp.Position - lHRP.Position).Magnitude
+            if dist < CurrentNearestDist then
+                CurrentNearestDist = dist
+                Target = m
+            end
+        end
+    end
 
-		-- Step 1: find nearest target
-		local Target
-		local NearestDist = MaxRange
+    -- players
+    local playersFolder = workspace:FindFirstChild("Players")
+    if playersFolder then
+        checkModels(playersFolder:GetChildren())
+    end
 
-		local function scanGroup(group)
-			for _, obj in ipairs(group) do
-				if obj == Character or not obj:FindFirstChild("HumanoidRootPart") then continue end
-				local dist = (obj.HumanoidRootPart.Position - HumanoidRootPart.Position).Magnitude
-				if dist < NearestDist then
-					NearestDist = dist
-					Target = obj
-				end
-			end
-		end
+    -- NPCs (map)
+    local npcsFolder = workspace:FindFirstChild("Map") and workspace.Map:FindFirstChild("NPCs", true)
+    if npcsFolder then
+        checkModels(npcsFolder:GetChildren())
+    end
 
-		scanGroup(workspace.Players:GetDescendants())
-		local npcs = workspace:FindFirstChild("Map", true) and workspace.Map:FindFirstChild("NPCs", true)
-		if npcs then
-			scanGroup(npcs:GetChildren())
-		end
+    if not Target then return end
 
-		if not Target then return end
+    -- move towards target briefly to "reach"
+    local OldVelocity = lHRP.Velocity
+    local ping = 0.1
+    pcall(function() ping = lp:GetNetworkPing() or 0.1 end)
+    local predicted = Target:FindFirstChild("HumanoidRootPart") and Target.HumanoidRootPart.Position or (lHRP.Position)
+    local NeededVelocity = (predicted
+        + Vector3.new(ForsakenRNG:NextNumber(-1.5,1.5), 0, ForsakenRNG:NextNumber(-1.5,1.5))
+        + ((Target:FindFirstChild("HumanoidRootPart") and Target.HumanoidRootPart.Velocity or Vector3.zero) * (ping * 1.25))
+        - lHRP.Position
+    ) / math.max(0.05, (ping * 2))
 
-		-- Step 2: prediction + reach assist
-		local ping = LocalPlayer:GetNetworkPing()
-		local randomOffset = Vector3.new(RNG:NextNumber(-1.5, 1.5), 0, RNG:NextNumber(-1.5, 1.5))
-		local predicted = Target.HumanoidRootPart.Position
-			+ randomOffset
-			+ (Target.HumanoidRootPart.Velocity * (ping * 1.25))
+    -- apply and restore
+    lHRP.Velocity = NeededVelocity
+    RunService.RenderStepped:Wait()
+    lHRP.Velocity = OldVelocity
+end)
 
-		local neededVelocity = (predicted - HumanoidRootPart.Position) / (ping * 2)
-
-		local oldVelocity = HumanoidRootPart.Velocity
-		HumanoidRootPart.Velocity = neededVelocity
-		RunService.RenderStepped:Wait()
-		HumanoidRootPart.Velocity = oldVelocity
-	end)
+-- disconnect automatically if player leaves (keeps things tidy)
+lp.AncestryChanged:Connect(function(_, parent)
+    if not parent then
+        if conn and conn.Connected then conn:Disconnect() end
+    end
 end)
 
 -- player
@@ -2031,26 +2046,26 @@ RagebaitTab:CreateParagraph({
     Content = "Section"
 })
 
+-- reach hitbox (ragebait)
 RagebaitTab:CreateToggle({
-    Name = "Reach",
+    Name = "Forsaken Reach",
     CurrentValue = false,
-    Flag = "EnableReach",
-    Callback = function(Value)
-        HitboxEnabled = Value
-    end,
+    Flag = "ForsakenReachToggle",
+    Callback = function(state)
+        ForsakenReachEnabled = state
+    end
 })
 
-RagebaitTab:CreateInput({
-    Name = "Distance",
-    PlaceholderText = "120",
-    RemoveTextAfterFocusLost = false,
-    Flag = "reachdistance",
-    Callback = function(Value)
-        local num = tonumber(Value)
-        if num then
-            HitboxMaxRange = num
-        end
-    end,
+RagebaitTab:CreateSlider({
+    Name = "Reach Distance",
+    Range = {10, 1000},
+    Increment = 1,
+    Suffix = "studs",
+    CurrentValue = ForsakenNearestDist,
+    Flag = "ForsakenReachSlider",
+    Callback = function(val)
+        ForsakenNearestDist = val
+    end
 })
 
 RagebaitTab:CreateParagraph({
