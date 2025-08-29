@@ -27,6 +27,10 @@ local PlayerGui = lp:WaitForChild("PlayerGui")
 local Humanoid, Animator
 local StarterGui = game:GetService("StarterGui")
 
+-- shedletsky var
+local autoSlash = false
+local slashRange = 10 -- studs
+
 -- reach hitbox var
 local ForsakenReachEnabled = false
 local ForsakenNearestDist = 120
@@ -253,6 +257,33 @@ local CustomAnimTab = Window:CreateTab("Custom Animations", 4483362458)
 local CreditsTab = Window:CreateTab("Credits", 4483362458)
 
 -- Things
+-- shedletsky (thing)
+task.spawn(function()
+    while task.wait(0.1) do
+        if not autoSlash then continue end
+        local char = lp.Character
+        if not char then continue end
+        local myRoot = char:FindFirstChild("HumanoidRootPart")
+        if not myRoot then continue end
+
+        for _, killer in ipairs(KillersFolder:GetChildren()) do
+            if killer and killer:FindFirstChild("HumanoidRootPart") then
+                local kroot = killer.HumanoidRootPart
+                local dist = (kroot.Position - myRoot.Position).Magnitude
+                if dist <= slashRange then
+                    -- Fire server to use Slash ability (same pattern hub uses for other abilities)
+                    local args = {"UseActorAbility", "Slash"}
+                    ReplicatedStorage:WaitForChild("Modules"):WaitForChild("Network"):WaitForChild("RemoteEvent"):FireServer(unpack(args))
+
+                    -- small throttle to avoid spamming the server
+                    task.wait(0.6)
+                    break
+                end
+            end
+        end
+    end
+end)
+
 -- Reach hitbox (thing)
 local ForsakenAttackIds = {}
 for _, v in ipairs(ForsakenAttackList) do
@@ -1743,6 +1774,33 @@ Callback = function(Value) voidrushcontrol = Value end
 })
 
 -- survivors tab
+
+SurvivorsTab:CreateParagraph({
+    Title = "Shedletsky",
+    Content = "section"
+})
+
+-- shedletsky (survivors)
+SurvivorsTab:CreateToggle({
+    Name = "Auto Slash",
+    CurrentValue = false,
+    Flag = "AutoSlashToggle",
+    Callback = function(val)
+        autoSlash = val
+    end,
+})
+
+SurvivorsTab:CreateSlider({
+    Name = "Range",
+    Range = {1, 25},
+    Increment = 1,
+    Suffix = "Studs",
+    CurrentValue = slashRange,
+    Flag = "SlashRange",
+    Callback = function(val)
+        slashRange = val
+    end,
+})
 
 -- chance (survivors)
 SurvivorsTab:CreateParagraph({
