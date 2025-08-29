@@ -2219,7 +2219,7 @@ MiscTab:CreateButton({
 -- Credits tab
 CreditsTab:CreateParagraph({
     Title = "Creds",
-    Content = "iyre - hitbox reach, @numantf2 on discord - noli void rush, and most importantly, chatgpt."
+    Content = "iyre - hitbox reach, @numantf2 on discord - noli void rush, @idkwhathappentoday on discord - shed auto slash, and most importantly, chatgpt."
 })
 
 -- Stuff on the end
