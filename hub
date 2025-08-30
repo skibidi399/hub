@@ -27,6 +27,29 @@ local PlayerGui = lp:WaitForChild("PlayerGui")
 local Humanoid, Animator
 local StarterGui = game:GetService("StarterGui")
 
+-- full bright var
+local Lighting = game:GetService("Lighting")
+local fullbrightEnabled = false
+
+local fullbrightOriginal = {
+    Brightness = Lighting.Brightness,
+    ClockTime = Lighting.ClockTime,
+    GlobalShadows = Lighting.GlobalShadows,
+    Ambient = Lighting.Ambient,
+    OutdoorAmbient = Lighting.OutdoorAmbient,
+    FogEnd = Lighting.FogEnd,
+}
+
+local fullbrightTarget = {
+    Brightness = 2,
+    ClockTime = 12,
+    GlobalShadows = false,
+    Ambient = Color3.fromRGB(255,255,255),
+    OutdoorAmbient = Color3.fromRGB(255,255,255),
+    FogEnd = 1e9,
+}
+
+
 -- shedletsky var
 local autoSlash = false
 local slashRange = 10 -- studs
@@ -257,6 +280,25 @@ local CustomAnimTab = Window:CreateTab("Custom Animations", 4483362458)
 local CreditsTab = Window:CreateTab("Credits", 4483362458)
 
 -- Things
+-- full bright (thing)
+local function applyFullbright()
+    for k,v in pairs(fullbrightTarget) do
+        Lighting[k] = v
+    end
+end
+
+local function restoreFullbright()
+    for k,v in pairs(fullbrightOriginal) do
+        Lighting[k] = v
+    end
+end
+
+-- keep enforcing if enabled
+RunService.RenderStepped:Connect(function()
+    if fullbrightEnabled then
+        applyFullbright()
+    end
+end)
 -- shedletsky (thing)
 task.spawn(function()
     while task.wait(0.1) do
@@ -2208,6 +2250,21 @@ RagebaitTab:CreateButton({
 })
 
 -- Misc tab
+-- fullbright (misc)
+MiscTab:CreateToggle({
+    Name = "Fullbright",
+    CurrentValue = false,
+    Flag = "FullbrightToggle",
+    Callback = function(state)
+        fullbrightEnabled = state
+        if state then
+            applyFullbright()
+        else
+            restoreFullbright()
+        end
+    end,
+})
+
 -- infinite yield (misc)
 MiscTab:CreateButton({
     Name = "Run Infinite Yield",
@@ -2234,6 +2291,12 @@ end)
 lp.AncestryChanged:Connect(function()
     if not lp:IsDescendantOf(game) then
         stopUltra()
+    end
+end)
+
+lp.AncestryChanged:Connect(function(_, parent)
+    if not parent then
+        pcall(restoreFullbright)
     end
 end)
 
